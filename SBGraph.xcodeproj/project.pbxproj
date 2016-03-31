@@ -8,12 +8,16 @@
 
 /* Begin PBXBuildFile section */
 		225F52ED1CADCB5E00BDBB29 /* SBGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = 225F52EC1CADCB5E00BDBB29 /* SBGraph.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		225F52F61CADCC2F00BDBB29 /* SBGraphView.h in Headers */ = {isa = PBXBuildFile; fileRef = 225F52F41CADCC2F00BDBB29 /* SBGraphView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		225F52F71CADCC2F00BDBB29 /* SBGraphView.m in Sources */ = {isa = PBXBuildFile; fileRef = 225F52F51CADCC2F00BDBB29 /* SBGraphView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		225F52E91CADCB5E00BDBB29 /* SBGraph.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SBGraph.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		225F52EC1CADCB5E00BDBB29 /* SBGraph.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBGraph.h; sourceTree = "<group>"; };
 		225F52EE1CADCB5E00BDBB29 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		225F52F41CADCC2F00BDBB29 /* SBGraphView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBGraphView.h; sourceTree = "<group>"; };
+		225F52F51CADCC2F00BDBB29 /* SBGraphView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBGraphView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,6 +51,8 @@
 			isa = PBXGroup;
 			children = (
 				225F52EC1CADCB5E00BDBB29 /* SBGraph.h */,
+				225F52F41CADCC2F00BDBB29 /* SBGraphView.h */,
+				225F52F51CADCC2F00BDBB29 /* SBGraphView.m */,
 				225F52EE1CADCB5E00BDBB29 /* Info.plist */,
 			);
 			path = SBGraph;
@@ -60,6 +66,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				225F52ED1CADCB5E00BDBB29 /* SBGraph.h in Headers */,
+				225F52F61CADCC2F00BDBB29 /* SBGraphView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,6 +137,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				225F52F71CADCC2F00BDBB29 /* SBGraphView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
