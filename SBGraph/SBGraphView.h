@@ -30,7 +30,7 @@
 // Primitive properties
 //
 
-// default true
+// default YES
 @property (nonatomic) BOOL enableGraphBoundsLines;
 // default 1.0
 @property (nonatomic) CGFloat gridLinesWidth;

@@ -7,6 +7,7 @@
 //
 
 #import "SBGraphView.h"
+#import "SBLine.h"
 
 typedef struct {
     CGPoint *points;
@@ -48,42 +49,82 @@ typedef struct {
     self.colorGraphBoundsLines = [[UIColor whiteColor] colorWithAlphaComponent:.9];
     self.colorDataLine = [UIColor whiteColor];
     self.gridLinesWidth = 1.0;
+    self.enableGraphBoundsLines = YES;
+    
+    // redraw on rotate
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didRotate) name:UIDeviceOrientationDidChangeNotification object:nil];
 }
+
 
 #pragma mark - Drawing
 
+// redraw on rotate
+- (void) didRotate
+{
+    [self setNeedsDisplay];
+}
+
+/**
+ * The general idea here is to get all the points for all the lines we want to draw, then draw them.
+ */
 - (void) drawRect:(CGRect)rect
 {
     [self calculateGraphDataBounds];
     
-    // Drawing code
-    NSArray *linePoints;
-    NSArray *lineColors;
-    linePoints = @[
-                   [self graphDataBoundsPoints],
-                   [self graphDataPoints]
-                   ];
-    lineColors = @[
-                   self.colorGraphBoundsLines,
-                   self.colorDataLine
-                   ];
+    NSMutableArray *lines = [[NSMutableArray alloc] init];
+    
+    //
+    // Optional lines
+    //
+    
+    if (self.enableGraphBoundsLines)
+    {
+        SBLine *graphBoundsLine = [[SBLine alloc] init];
+        graphBoundsLine.points = [self graphDataBoundsPoints];
+        graphBoundsLine.color = self.colorGraphBoundsLines;
+        
+        [lines addObject:graphBoundsLine];
+    }
+    
+    if ([self.delegate respondsToSelector:@selector(yValuesForReferenceLines)])
+    {
+        NSArray *yValues = [self.delegate yValuesForReferenceLines];
+        NSArray *horizontalReferenceLines = [self horizontalReferenceLinesForYValues:yValues];
+        
+        [lines addObjectsFromArray:horizontalReferenceLines];
+    }
+    
+    //
+    // Data line
+    //
+    
+    SBLine *dataLine = [[SBLine alloc] init];
+    dataLine.points = [self graphDataPoints];
+    dataLine.color = self.colorDataLine;
+    [lines addObject:dataLine];
     
     // draw!
-    for (int i = 0; i < linePoints.count; i++)
+    for (int i = 0; i < lines.count; i++)
     {
-        UIColor *strokeColor = lineColors[i];
-        [strokeColor setStroke];
-        
-        UIBezierPath *path = [self pathForPoints:linePoints[i]];
-        
-        CAShapeLayer *layer = [CAShapeLayer layer];
-        layer.frame = self.bounds;
-        layer.path = path.CGPath;
-        layer.fillColor = [UIColor clearColor].CGColor;
-        
-        [path stroke];
-        [self.layer addSublayer:layer];
+        if (lines[i] == nil) continue;
+        [self drawLine:lines[i]];
     }
+}
+
+- (void) drawLine:(SBLine*)line
+{
+    UIColor *strokeColor = line.color;
+    [strokeColor setStroke];
+    
+    UIBezierPath *path = [self pathForPoints:line.points];
+    
+    CAShapeLayer *layer = [CAShapeLayer layer];
+    layer.frame = self.bounds;
+    layer.path = path.CGPath;
+    layer.fillColor = [UIColor clearColor].CGColor;
+    
+    [path stroke];
+    [self.layer addSublayer:layer];
 }
 
 - (UIBezierPath*) pathForPoints:(NSArray*)points
@@ -114,8 +155,8 @@ typedef struct {
     self.graphDataBounds = CGRectMake(
                                       leftMargin - halfGridLinesWidth,
                                       halfGridLinesWidth,
-                                      self.frame.size.width - leftMargin,
-                                      self.frame.size.height - bottomMargin
+                                      self.bounds.size.width - leftMargin,
+                                      self.bounds.size.height - bottomMargin
                                       );
 }
 
@@ -146,7 +187,7 @@ typedef struct {
 
 /** 
  * Calculates the points for graph data bounds
- * @return An array of CGPoints that correspond to the corners of the graph within the reference from of this view
+ * @return An array of CGPoints that correspond to the corners of the graph
  */
 - (NSArray*) graphDataBoundsPoints
 {
@@ -176,6 +217,43 @@ typedef struct {
                         ];
     
     return points;
+}
+
+/**
+ * @return An array of SBLine objects for the horizontal reference lines at the specified y values.
+ */
+- (NSArray*) horizontalReferenceLinesForYValues:(NSArray*)yValues
+{
+    CGFloat yMin = [self.delegate yMin];
+    CGFloat yMax = [self.delegate yMax];
+    CGFloat yRange = yMax - yMin;
+    
+    NSMutableArray *lines = [[NSMutableArray alloc] initWithCapacity:yValues.count];
+    for (int i = 0; i < yValues.count; i++)
+    {
+        
+        CGFloat yVal = [yValues[i] floatValue];
+        CGFloat xPosInDataBoundsLeft = self.graphDataBounds.origin.x;
+        CGFloat yPosInDataBounds = (1 - ((yVal - yMin) / yRange)) * self.graphDataBounds.size.height;
+        yPosInDataBounds += self.graphDataBounds.origin.y;
+        
+        CGPoint pointLeft = CGPointMake(xPosInDataBoundsLeft, yPosInDataBounds);
+        CGPoint pointRight = CGPointMake(
+                                         xPosInDataBoundsLeft + self.graphDataBounds.size.width,
+                                         yPosInDataBounds
+                                         );
+        
+        SBLine *line = [[SBLine alloc] init];
+        line.points = @[
+                        [NSValue valueWithCGPoint:pointLeft],
+                        [NSValue valueWithCGPoint:pointRight]
+                        ];
+        line.color = self.colorHorizontalReferenceLines;
+        
+        [lines addObject:line];
+    }
+    
+    return lines;
 }
 
 @end
