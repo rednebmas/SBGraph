@@ -48,8 +48,11 @@ typedef struct {
     self.colorHorizontalReferenceLines = [[UIColor whiteColor] colorWithAlphaComponent:.5];
     self.colorGraphBoundsLines = [[UIColor whiteColor] colorWithAlphaComponent:.9];
     self.colorDataLine = [UIColor whiteColor];
+    self.colorDataPoints = [UIColor whiteColor];
     self.gridLinesWidth = 1.0;
+    
     self.enableGraphBoundsLines = YES;
+    self.dataPointRadius = 0.0;
     
     // redraw on rotate
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didRotate) name:UIDeviceOrientationDidChangeNotification object:nil];
@@ -101,6 +104,8 @@ typedef struct {
     SBLine *dataLine = [[SBLine alloc] init];
     dataLine.points = [self graphDataPoints];
     dataLine.color = self.colorDataLine;
+    dataLine.pointColor = self.colorDataPoints;
+    dataLine.pointRadius = self.dataPointRadius;
     [lines addObject:dataLine];
     
     // draw!
@@ -113,10 +118,11 @@ typedef struct {
 
 - (void) drawLine:(SBLine*)line
 {
+    // Draw line
     UIColor *strokeColor = line.color;
     [strokeColor setStroke];
     
-    UIBezierPath *path = [self pathForPoints:line.points];
+    UIBezierPath *path = [self pathForLine:line];
     
     CAShapeLayer *layer = [CAShapeLayer layer];
     layer.frame = self.bounds;
@@ -125,10 +131,33 @@ typedef struct {
     
     [path stroke];
     [self.layer addSublayer:layer];
+    
+    // Draw points
+    if (line.pointRadius > 0.0f)
+    {
+        CGContextRef ctx = UIGraphicsGetCurrentContext();
+        CGFloat pointRadius = line.pointRadius;
+        [line.pointColor set];
+        
+        for (NSValue *pointValue in line.points)
+        {
+            CGPoint point = [pointValue CGPointValue];
+            CGRect pointRect = CGRectMake(
+                                          point.x - pointRadius,
+                                          point.y - pointRadius,
+                                          pointRadius * 2,
+                                          pointRadius * 2
+                                          );
+            CGContextAddEllipseInRect(ctx, pointRect);
+        }
+        
+        CGContextFillPath(ctx);
+    }
 }
 
-- (UIBezierPath*) pathForPoints:(NSArray*)points
+- (UIBezierPath*) pathForLine:(SBLine*)line
 {
+    NSArray *points = line.points;
     UIBezierPath *path = [UIBezierPath bezierPath];
     path.lineCapStyle = kCGLineCapButt;
     path.lineWidth = self.gridLinesWidth;

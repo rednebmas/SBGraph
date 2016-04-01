@@ -34,6 +34,8 @@
 @property (nonatomic) BOOL enableGraphBoundsLines;
 // default 1.0
 @property (nonatomic) CGFloat gridLinesWidth;
+// default 0.0
+@property (nonatomic) CGFloat dataPointRadius;
 
 //
 //
@@ -46,6 +48,7 @@
 //
 
 @property (nonatomic, retain) UIColor *colorDataLine;
+@property (nonatomic, retain) UIColor *colorDataPoints;
 @property (nonatomic, retain) UIColor *colorVerticalReferenceLines;
 @property (nonatomic, retain) UIColor *colorHorizontalReferenceLines;
 @property (nonatomic, retain) UIColor *colorGraphBoundsLines;
