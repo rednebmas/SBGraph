@@ -45,7 +45,7 @@ typedef struct {
 {
     self.colorVerticalReferenceLines = [[UIColor whiteColor] colorWithAlphaComponent:.5];
     self.colorHorizontalReferenceLines = [[UIColor whiteColor] colorWithAlphaComponent:.5];
-    self.colorGraphBoundsLines = [[UIColor blackColor] colorWithAlphaComponent:.5];
+    self.colorGraphBoundsLines = [[UIColor whiteColor] colorWithAlphaComponent:.9];
     self.gridLinesWidth = 1.0;
 }
 
@@ -65,6 +65,7 @@ typedef struct {
                    self.colorGraphBoundsLines
                    ];
     
+    // draw!
     for (int i = 0; i < linePoints.count; i++)
     {
         UIColor *strokeColor = lineColors[i];
@@ -86,7 +87,7 @@ typedef struct {
 {
     UIBezierPath *path = [UIBezierPath bezierPath];
     path.lineCapStyle = kCGLineCapButt;
-    path.lineWidth = 1.0;
+    path.lineWidth = self.gridLinesWidth;
 
     // draw
     [path moveToPoint:[points[0] CGPointValue]];
@@ -102,12 +103,14 @@ typedef struct {
 
 - (void) calculateGraphDataBounds
 {
-    // get graph bounds
     CGFloat leftMargin = 35;
     CGFloat bottomMargin = 35;
+    // if the line goes from (0,0) to (10,0) and the width is 2, the top of the stroked line will be (0, -1) at the first point. this variable allows the full width of the data bounds to be shown on the screen.
+    CGFloat halfGridLinesWidth = self.gridLinesWidth / 2;
+    
     self.graphDataBounds = CGRectMake(
-                                      leftMargin - self.gridLinesWidth / 2,
-                                      0 + self.gridLinesWidth / 2,
+                                      leftMargin - halfGridLinesWidth,
+                                      halfGridLinesWidth,
                                       self.frame.size.width - leftMargin,
                                       self.frame.size.height - bottomMargin
                                       );
