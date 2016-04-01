@@ -12,6 +12,11 @@
 
 - (CGFloat) yMin;
 - (CGFloat) yMax;
+// the y values for the graph
+- (NSArray*) yValues;
+
+@optional
+
 // an ordered array of (NSNumber) floats
 - (NSArray*) xIndicesForReferenceLines;
 // an ordered array of (NSNumber) floats
@@ -22,7 +27,7 @@
 @interface SBGraphView : UIView
 
 //
-//
+// Primitive properties
 //
 
 // default true
@@ -31,9 +36,16 @@
 @property (nonatomic) CGFloat gridLinesWidth;
 
 //
+//
+//
+
+@property (nonatomic, weak) id<SBGraphViewDelegate> delegate;
+
+//
 // Colors
 //
 
+@property (nonatomic, retain) UIColor *colorDataLine;
 @property (nonatomic, retain) UIColor *colorVerticalReferenceLines;
 @property (nonatomic, retain) UIColor *colorHorizontalReferenceLines;
 @property (nonatomic, retain) UIColor *colorGraphBoundsLines;

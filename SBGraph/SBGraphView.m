@@ -46,6 +46,7 @@ typedef struct {
     self.colorVerticalReferenceLines = [[UIColor whiteColor] colorWithAlphaComponent:.5];
     self.colorHorizontalReferenceLines = [[UIColor whiteColor] colorWithAlphaComponent:.5];
     self.colorGraphBoundsLines = [[UIColor whiteColor] colorWithAlphaComponent:.9];
+    self.colorDataLine = [UIColor whiteColor];
     self.gridLinesWidth = 1.0;
 }
 
@@ -59,10 +60,12 @@ typedef struct {
     NSArray *linePoints;
     NSArray *lineColors;
     linePoints = @[
-                   [self graphDataBoundsPoints]
+                   [self graphDataBoundsPoints],
+                   [self graphDataPoints]
                    ];
     lineColors = @[
-                   self.colorGraphBoundsLines
+                   self.colorGraphBoundsLines,
+                   self.colorDataLine
                    ];
     
     // draw!
@@ -117,6 +120,29 @@ typedef struct {
 }
 
 #pragma mark - Point generation
+
+- (NSArray*) graphDataPoints
+{
+    CGFloat yMin = [self.delegate yMin];
+    CGFloat yMax = [self.delegate yMax];
+    CGFloat yRange = yMax - yMin;
+    NSArray *yValues = [self.delegate yValues];
+    
+    NSMutableArray *points = [[NSMutableArray alloc] initWithCapacity:yValues.count];
+    for (int i = 0; i < yValues.count; i++)
+    {
+        CGFloat yVal = [yValues[i] floatValue];
+        CGFloat yPosInDataBounds = (1 - ((yVal - yMin) / yRange)) * self.graphDataBounds.size.height;
+        CGFloat xPosInDataBounds = ((float)i / (yValues.count - 1)) * self.graphDataBounds.size.width;
+        xPosInDataBounds += self.graphDataBounds.origin.x;
+        yPosInDataBounds += self.graphDataBounds.origin.y;
+        CGPoint point = CGPointMake(xPosInDataBounds, yPosInDataBounds);
+        
+        [points addObject:[NSValue valueWithCGPoint:point]];
+    }
+    
+    return points;
+}
 
 /** 
  * Calculates the points for graph data bounds
