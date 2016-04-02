@@ -17,6 +17,7 @@ typedef struct {
 @interface SBGraphView()
 
 @property (nonatomic) CGRect graphDataBounds;
+@property (nonatomic, retain) UIView *touchInputLine;
 
 @end
 
@@ -44,13 +45,19 @@ typedef struct {
 
 - (void) initialize
 {
+    self.colorTouchInputLine = [[UIColor whiteColor] colorWithAlphaComponent:.3];
     self.colorVerticalReferenceLines = [[UIColor whiteColor] colorWithAlphaComponent:.5];
     self.colorHorizontalReferenceLines = [[UIColor whiteColor] colorWithAlphaComponent:.5];
     self.colorGraphBoundsLines = [[UIColor whiteColor] colorWithAlphaComponent:.9];
     self.colorDataLine = [UIColor whiteColor];
     self.colorDataPoints = [UIColor whiteColor];
-    self.gridLinesWidth = 1.0;
     
+    self.touchInputLine = [[UIView alloc] init];
+    self.touchInputLine.hidden = YES;
+    self.touchInputLine.backgroundColor = self.colorTouchInputLine;
+    [self addSubview:self.touchInputLine];
+    
+    self.gridLinesWidth = 1.0;
     self.enableGraphBoundsLines = YES;
     self.dataPointRadius = 0.0;
     
@@ -73,6 +80,7 @@ typedef struct {
 - (void) drawRect:(CGRect)rect
 {
     [self calculateGraphDataBounds];
+    self.touchInputLine.frame = CGRectMake(0, 0, 1, self.graphDataBounds.size.height);
     
     NSMutableArray *lines = [[NSMutableArray alloc] init];
     
@@ -335,5 +343,40 @@ typedef struct {
     
     return lines;
 }
+
+#pragma mark - Touch input line
+
+- (void) touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    self.touchInputLine.hidden = NO;
+    [self handleTouches:touches withEvent:event];
+}
+
+- (void) touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [self handleTouches:touches withEvent:event];
+}
+
+- (void) touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    if (self.touchInputLine.hidden == NO)
+    {
+        self.touchInputLine.hidden = YES;
+    }
+}
+
+- (void) handleTouches:(NSSet<UITouch *> *)touches withEvent:(UIEvent*)event
+{
+    UITouch *touch = [touches anyObject];
+    CGPoint locationInView = [touch locationInView:self];
+    if (locationInView.x > self.graphDataBounds.origin.x
+        && locationInView.x < self.frame.size.width)
+    {
+        CGRect touchRect = self.touchInputLine.frame;
+        touchRect.origin.x = locationInView.x;
+        self.touchInputLine.frame = touchRect;
+    }
+}
+
 
 @end

@@ -52,5 +52,6 @@
 @property (nonatomic, retain) UIColor *colorVerticalReferenceLines;
 @property (nonatomic, retain) UIColor *colorHorizontalReferenceLines;
 @property (nonatomic, retain) UIColor *colorGraphBoundsLines;
+@property (nonatomic, retain) UIColor *colorTouchInputLine;
 
 @end
