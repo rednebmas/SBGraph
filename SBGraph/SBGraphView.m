@@ -77,27 +77,6 @@ typedef struct {
     NSMutableArray *lines = [[NSMutableArray alloc] init];
     
     //
-    // Optional lines
-    //
-    
-    if (self.enableGraphBoundsLines)
-    {
-        SBLine *graphBoundsLine = [[SBLine alloc] init];
-        graphBoundsLine.points = [self graphDataBoundsPoints];
-        graphBoundsLine.color = self.colorGraphBoundsLines;
-        
-        [lines addObject:graphBoundsLine];
-    }
-    
-    if ([self.delegate respondsToSelector:@selector(yValuesForReferenceLines)])
-    {
-        NSArray *yValues = [self.delegate yValuesForReferenceLines];
-        NSArray *horizontalReferenceLines = [self horizontalReferenceLinesForYValues:yValues];
-        
-        [lines addObjectsFromArray:horizontalReferenceLines];
-    }
-    
-    //
     // Data line
     //
     
@@ -108,7 +87,42 @@ typedef struct {
     dataLine.pointRadius = self.dataPointRadius;
     [lines addObject:dataLine];
     
-    // draw!
+    //
+    // Optional lines
+    //
+    
+    // graph bounds lines
+    if (self.enableGraphBoundsLines)
+    {
+        SBLine *graphBoundsLine = [[SBLine alloc] init];
+        graphBoundsLine.points = [self graphDataBoundsPoints];
+        graphBoundsLine.color = self.colorGraphBoundsLines;
+        
+        [lines addObject:graphBoundsLine];
+    }
+    
+    // horizontal reference lines
+    if ([self.delegate respondsToSelector:@selector(yValuesForReferenceLines)])
+    {
+        NSArray *yValues = [self.delegate yValuesForReferenceLines];
+        NSArray *horizontalReferenceLines = [self horizontalReferenceLinesForYValues:yValues];
+        
+        [lines addObjectsFromArray:horizontalReferenceLines];
+    }
+    
+    // vertical reference lines
+    if ([self.delegate respondsToSelector:@selector(xIndicesForReferenceLines)])
+    {
+        NSArray *xIndices = [self.delegate xIndicesForReferenceLines];
+        NSArray *verticalReferenceLines = [self
+                                           verticalReferenceLinesForXIndices:xIndices
+                                           andTotalNumberOfDataPoints:dataLine.points.count];
+        [lines addObjectsFromArray:verticalReferenceLines];
+    }
+    
+    //
+    // Draw!
+    //
     for (int i = 0; i < lines.count; i++)
     {
         if (lines[i] == nil) continue;
@@ -262,14 +276,14 @@ typedef struct {
     {
         
         CGFloat yVal = [yValues[i] floatValue];
-        CGFloat xPosInDataBoundsLeft = self.graphDataBounds.origin.x;
-        CGFloat yPosInDataBounds = (1 - ((yVal - yMin) / yRange)) * self.graphDataBounds.size.height;
-        yPosInDataBounds += self.graphDataBounds.origin.y;
+        CGFloat xPosLeft = self.graphDataBounds.origin.x;
+        CGFloat yPos = (1 - ((yVal - yMin) / yRange)) * self.graphDataBounds.size.height;
+        yPos += self.graphDataBounds.origin.y;
         
-        CGPoint pointLeft = CGPointMake(xPosInDataBoundsLeft, yPosInDataBounds);
+        CGPoint pointLeft = CGPointMake(xPosLeft, yPos);
         CGPoint pointRight = CGPointMake(
-                                         xPosInDataBoundsLeft + self.graphDataBounds.size.width,
-                                         yPosInDataBounds
+                                         xPosLeft + self.graphDataBounds.size.width,
+                                         yPos
                                          );
         
         SBLine *line = [[SBLine alloc] init];
@@ -278,6 +292,43 @@ typedef struct {
                         [NSValue valueWithCGPoint:pointRight]
                         ];
         line.color = self.colorHorizontalReferenceLines;
+        
+        [lines addObject:line];
+    }
+    
+    return lines;
+}
+
+/**
+ * @return An array of SBLine objects for the horizontal reference lines at the specified y values.
+ */
+- (NSArray*) verticalReferenceLinesForXIndices:(NSArray*)xIndices
+                    andTotalNumberOfDataPoints:(size_t)dataPointsCount
+{
+    CGFloat totalDataPointsMinusOne = (float)dataPointsCount - 1;
+    NSMutableArray *lines = [[NSMutableArray alloc] initWithCapacity:xIndices.count];
+    
+    for (int i = 0; i < xIndices.count; i++)
+    {
+        CGFloat referenceLineXIndex = (float)[xIndices[i] floatValue];
+        CGFloat xPos = (referenceLineXIndex / totalDataPointsMinusOne) * self.graphDataBounds.size.width;
+        CGFloat yPosBottom = self.graphDataBounds.size.height;
+        
+        xPos += self.graphDataBounds.origin.x;
+        yPosBottom += self.graphDataBounds.origin.y;
+        
+        CGPoint pointBottom = CGPointMake(xPos, yPosBottom);
+        CGPoint pointTop = CGPointMake(
+                                         xPos,
+                                         self.graphDataBounds.origin.y
+                                         );
+        
+        SBLine *line = [[SBLine alloc] init];
+        line.points = @[
+                        [NSValue valueWithCGPoint:pointBottom],
+                        [NSValue valueWithCGPoint:pointTop]
+                        ];
+        line.color = self.colorVerticalReferenceLines;
         
         [lines addObject:line];
     }
