@@ -8,6 +8,7 @@
 
 #import "SBGraphView.h"
 #import "SBLine.h"
+#import "SBCoordinateMapper.h"
 
 typedef struct {
     CGPoint *points;
@@ -18,6 +19,7 @@ typedef struct {
 
 @property (nonatomic) CGRect graphDataBounds;
 @property (nonatomic, retain) UIView *touchInputLine;
+@property (nonatomic, retain) SBCoordinateMapper *coordinateMapper;
 
 @end
 
@@ -45,6 +47,8 @@ typedef struct {
 
 - (void) initialize
 {
+    self.coordinateMapper = [[SBCoordinateMapper alloc] init];
+    
     self.colorTouchInputLine = [[UIColor whiteColor] colorWithAlphaComponent:.3];
     self.colorVerticalReferenceLines = [[UIColor whiteColor] colorWithAlphaComponent:.5];
     self.colorHorizontalReferenceLines = [[UIColor whiteColor] colorWithAlphaComponent:.5];
@@ -222,6 +226,12 @@ typedef struct {
                                       self.bounds.size.width - leftMargin,
                                       self.bounds.size.height - bottomMargin
                                       );
+    
+    // configure coordinate mapper
+    CGFloat yMin = [self.delegate yMin];
+    CGFloat yMax = [self.delegate yMax];
+    CGRect graphFrame = CGRectMake(0, yMin, [self.delegate yValues].count-1, yMax - yMin);
+    [self.coordinateMapper setScreenFrame:self.graphDataBounds graphFrame:graphFrame];
 }
 
 - (void) addLabelsForHorizontalReferenceLinesForYValues:(NSArray*)yValues
@@ -304,12 +314,7 @@ typedef struct {
     for (int i = 0; i < yValues.count; i++)
     {
         CGFloat yVal = [yValues[i] floatValue];
-        CGFloat yPosInDataBounds = (1 - ((yVal - yMin) / yRange)) * self.graphDataBounds.size.height;
-        CGFloat xPosInDataBounds = ((float)i / (yValues.count - 1)) * self.graphDataBounds.size.width;
-        xPosInDataBounds += self.graphDataBounds.origin.x;
-        yPosInDataBounds += self.graphDataBounds.origin.y;
-        CGPoint point = CGPointMake(xPosInDataBounds, yPosInDataBounds);
-        
+        CGPoint point = [self.coordinateMapper screenPointForGraphPoint:CGPointMake((float)i, yVal)];
         [points addObject:[NSValue valueWithCGPoint:point]];
     }
     
