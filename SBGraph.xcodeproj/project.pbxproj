@@ -10,7 +10,23 @@
 		225F52ED1CADCB5E00BDBB29 /* SBGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = 225F52EC1CADCB5E00BDBB29 /* SBGraph.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		225F52F61CADCC2F00BDBB29 /* SBGraphView.h in Headers */ = {isa = PBXBuildFile; fileRef = 225F52F41CADCC2F00BDBB29 /* SBGraphView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		225F52F71CADCC2F00BDBB29 /* SBGraphView.m in Sources */ = {isa = PBXBuildFile; fileRef = 225F52F51CADCC2F00BDBB29 /* SBGraphView.m */; };
+		22E2EEB81CB6D74D0042D89D /* SBGraphTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 22E2EEB71CB6D74D0042D89D /* SBGraphTests.m */; };
+		22E2EEBA1CB6D74D0042D89D /* SBGraph.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 225F52E91CADCB5E00BDBB29 /* SBGraph.framework */; };
+		22E2EEC21CB6D78F0042D89D /* SBLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 22E2EEC01CB6D78F0042D89D /* SBLine.h */; };
+		22E2EEC31CB6D78F0042D89D /* SBLine.m in Sources */ = {isa = PBXBuildFile; fileRef = 22E2EEC11CB6D78F0042D89D /* SBLine.m */; };
+		22E2EEC61CB6D7C60042D89D /* SBCoordinateMapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 22E2EEC41CB6D7C60042D89D /* SBCoordinateMapper.h */; };
+		22E2EEC71CB6D7C60042D89D /* SBCoordinateMapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 22E2EEC51CB6D7C60042D89D /* SBCoordinateMapper.m */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		22E2EEBB1CB6D74D0042D89D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 225F52E01CADCB5E00BDBB29 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 225F52E81CADCB5E00BDBB29;
+			remoteInfo = SBGraph;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		225F52E91CADCB5E00BDBB29 /* SBGraph.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SBGraph.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -18,6 +34,13 @@
 		225F52EE1CADCB5E00BDBB29 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		225F52F41CADCC2F00BDBB29 /* SBGraphView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBGraphView.h; sourceTree = "<group>"; };
 		225F52F51CADCC2F00BDBB29 /* SBGraphView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBGraphView.m; sourceTree = "<group>"; };
+		22E2EEB51CB6D74D0042D89D /* SBGraphTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SBGraphTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		22E2EEB71CB6D74D0042D89D /* SBGraphTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SBGraphTests.m; sourceTree = "<group>"; };
+		22E2EEB91CB6D74D0042D89D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		22E2EEC01CB6D78F0042D89D /* SBLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBLine.h; sourceTree = "<group>"; };
+		22E2EEC11CB6D78F0042D89D /* SBLine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBLine.m; sourceTree = "<group>"; };
+		22E2EEC41CB6D7C60042D89D /* SBCoordinateMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBCoordinateMapper.h; sourceTree = "<group>"; };
+		22E2EEC51CB6D7C60042D89D /* SBCoordinateMapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBCoordinateMapper.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -28,6 +51,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		22E2EEB21CB6D74D0042D89D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				22E2EEBA1CB6D74D0042D89D /* SBGraph.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -35,6 +66,7 @@
 			isa = PBXGroup;
 			children = (
 				225F52EB1CADCB5E00BDBB29 /* SBGraph */,
+				22E2EEB61CB6D74D0042D89D /* SBGraphTests */,
 				225F52EA1CADCB5E00BDBB29 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -43,6 +75,7 @@
 			isa = PBXGroup;
 			children = (
 				225F52E91CADCB5E00BDBB29 /* SBGraph.framework */,
+				22E2EEB51CB6D74D0042D89D /* SBGraphTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -50,12 +83,25 @@
 		225F52EB1CADCB5E00BDBB29 /* SBGraph */ = {
 			isa = PBXGroup;
 			children = (
+				22E2EEC41CB6D7C60042D89D /* SBCoordinateMapper.h */,
+				22E2EEC51CB6D7C60042D89D /* SBCoordinateMapper.m */,
 				225F52EC1CADCB5E00BDBB29 /* SBGraph.h */,
 				225F52F41CADCC2F00BDBB29 /* SBGraphView.h */,
 				225F52F51CADCC2F00BDBB29 /* SBGraphView.m */,
+				22E2EEC01CB6D78F0042D89D /* SBLine.h */,
+				22E2EEC11CB6D78F0042D89D /* SBLine.m */,
 				225F52EE1CADCB5E00BDBB29 /* Info.plist */,
 			);
 			path = SBGraph;
+			sourceTree = "<group>";
+		};
+		22E2EEB61CB6D74D0042D89D /* SBGraphTests */ = {
+			isa = PBXGroup;
+			children = (
+				22E2EEB71CB6D74D0042D89D /* SBGraphTests.m */,
+				22E2EEB91CB6D74D0042D89D /* Info.plist */,
+			);
+			path = SBGraphTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -65,7 +111,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				22E2EEC61CB6D7C60042D89D /* SBCoordinateMapper.h in Headers */,
 				225F52ED1CADCB5E00BDBB29 /* SBGraph.h in Headers */,
+				22E2EEC21CB6D78F0042D89D /* SBLine.h in Headers */,
 				225F52F61CADCC2F00BDBB29 /* SBGraphView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -91,6 +139,24 @@
 			productReference = 225F52E91CADCB5E00BDBB29 /* SBGraph.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		22E2EEB41CB6D74D0042D89D /* SBGraphTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 22E2EEBF1CB6D74D0042D89D /* Build configuration list for PBXNativeTarget "SBGraphTests" */;
+			buildPhases = (
+				22E2EEB11CB6D74D0042D89D /* Sources */,
+				22E2EEB21CB6D74D0042D89D /* Frameworks */,
+				22E2EEB31CB6D74D0042D89D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				22E2EEBC1CB6D74D0042D89D /* PBXTargetDependency */,
+			);
+			name = SBGraphTests;
+			productName = SBGraphTests;
+			productReference = 22E2EEB51CB6D74D0042D89D /* SBGraphTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -102,6 +168,9 @@
 				TargetAttributes = {
 					225F52E81CADCB5E00BDBB29 = {
 						CreatedOnToolsVersion = 7.2.1;
+					};
+					22E2EEB41CB6D74D0042D89D = {
+						CreatedOnToolsVersion = 7.3;
 					};
 				};
 			};
@@ -118,12 +187,20 @@
 			projectRoot = "";
 			targets = (
 				225F52E81CADCB5E00BDBB29 /* SBGraph */,
+				22E2EEB41CB6D74D0042D89D /* SBGraphTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		225F52E71CADCB5E00BDBB29 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		22E2EEB31CB6D74D0042D89D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -137,11 +214,29 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				22E2EEC31CB6D78F0042D89D /* SBLine.m in Sources */,
 				225F52F71CADCC2F00BDBB29 /* SBGraphView.m in Sources */,
+				22E2EEC71CB6D7C60042D89D /* SBCoordinateMapper.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		22E2EEB11CB6D74D0042D89D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				22E2EEB81CB6D74D0042D89D /* SBGraphTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		22E2EEBC1CB6D74D0042D89D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 225F52E81CADCB5E00BDBB29 /* SBGraph */;
+			targetProxy = 22E2EEBB1CB6D74D0042D89D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		225F52EF1CADCB5E00BDBB29 /* Debug */ = {
@@ -264,6 +359,30 @@
 			};
 			name = Release;
 		};
+		22E2EEBD1CB6D74D0042D89D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				INFOPLIST_FILE = SBGraphTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.sambender.SBGraphTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		22E2EEBE1CB6D74D0042D89D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				INFOPLIST_FILE = SBGraphTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.sambender.SBGraphTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -281,6 +400,15 @@
 			buildConfigurations = (
 				225F52F21CADCB5E00BDBB29 /* Debug */,
 				225F52F31CADCB5E00BDBB29 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		22E2EEBF1CB6D74D0042D89D /* Build configuration list for PBXNativeTarget "SBGraphTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				22E2EEBD1CB6D74D0042D89D /* Debug */,
+				22E2EEBE1CB6D74D0042D89D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};

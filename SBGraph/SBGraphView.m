@@ -51,20 +51,27 @@ typedef struct {
     self.colorGraphBoundsLines = [[UIColor whiteColor] colorWithAlphaComponent:.9];
     self.colorDataLine = [UIColor whiteColor];
     self.colorDataPoints = [UIColor whiteColor];
+    self.colorLabelText = [UIColor whiteColor];
     
     self.touchInputLine = [[UIView alloc] init];
     self.touchInputLine.hidden = YES;
     self.touchInputLine.backgroundColor = self.colorTouchInputLine;
     [self addSubview:self.touchInputLine];
     
-    self.gridLinesWidth = 1.0;
     self.enableGraphBoundsLines = YES;
+    self.enableYAxisLabels = YES;
+    self.enableXAxisLabels = YES;
+    self.gridLinesWidth = 1.0;
     self.dataPointRadius = 0.0;
+    
+    SBGraphMargins margins;
+    margins.left = 35;
+    margins.bottom = 35;
+    self.margins = margins;
     
     // redraw on rotate
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didRotate) name:UIDeviceOrientationDidChangeNotification object:nil];
 }
-
 
 #pragma mark - Drawing
 
@@ -114,6 +121,11 @@ typedef struct {
     {
         NSArray *yValues = [self.delegate yValuesForReferenceLines];
         NSArray *horizontalReferenceLines = [self horizontalReferenceLinesForYValues:yValues];
+        
+        if (self.enableYAxisLabels)
+        {
+            [self addLabelsForHorizontalReferenceLinesForYValues:yValues];
+        }
         
         [lines addObjectsFromArray:horizontalReferenceLines];
     }
@@ -198,8 +210,9 @@ typedef struct {
 
 - (void) calculateGraphDataBounds
 {
-    CGFloat leftMargin = 35;
-    CGFloat bottomMargin = 35;
+    CGFloat leftMargin = self.margins.left;
+    CGFloat bottomMargin = self.margins.bottom;
+    
     // if the line goes from (0,0) to (10,0) and the width is 2, the top of the stroked line will be (0, -1) at the first point. this variable allows the full width of the data bounds to be shown on the screen.
     CGFloat halfGridLinesWidth = self.gridLinesWidth / 2;
     
@@ -209,6 +222,73 @@ typedef struct {
                                       self.bounds.size.width - leftMargin,
                                       self.bounds.size.height - bottomMargin
                                       );
+}
+
+- (void) addLabelsForHorizontalReferenceLinesForYValues:(NSArray*)yValues
+{
+    CGFloat yMin = [self.delegate yMin];
+    CGFloat yMax = [self.delegate yMax];
+    CGFloat yRange = yMax - yMin;
+
+    for (int i = 0; i < yValues.count; i++)
+    {
+        UILabel *label = [[UILabel alloc] init];
+        [label setTextColor:self.colorLabelText];
+        
+        // get label text
+        CGFloat yValue = [yValues[i] floatValue];
+        if ([self.delegate respondsToSelector:@selector(label:forYValue:)])
+        {
+            [self.delegate label:label forYValue:yValue];
+        }
+        else
+        {
+            NSString *labelText = [NSString stringWithFormat:@"%.1f", yValue];
+            [label setFont:[UIFont systemFontOfSize:10.0]];
+            [label setText:labelText];
+        }
+        
+        [label sizeToFit];
+        
+        CGFloat yPos = (1 - ((yValue - yMin) / yRange)) * self.graphDataBounds.size.height;
+        yPos += self.graphDataBounds.origin.y;
+        
+        label.center = CGPointMake(self.graphDataBounds.origin.x / 2, yPos);
+        [self addSubview:label];
+    }
+}
+
+- (void) addLabelsForVerticalReferenceLinesForXIndices:(NSArray*)xIndices
+{
+    for (int i = 0; i < xIndices.count; i++)
+    {
+        UILabel *label = [[UILabel alloc] init];
+        [label setTextColor:self.colorLabelText];
+        
+        // get label text
+        CGFloat xIndex = [xIndices[i] floatValue];
+        if ([self.delegate respondsToSelector:@selector(label:forXIndex:)])
+        {
+            [self.delegate label:label forXIndex:xIndex];
+        }
+        else
+        {
+            NSString *labelText = [NSString stringWithFormat:@"%.1f", xIndex];
+            [label setFont:[UIFont systemFontOfSize:10.0]];
+            [label setText:labelText];
+        }
+        
+        [label sizeToFit];
+        
+        CGFloat xPos = (xIndex / (float)xIndices.count) * self.graphDataBounds.size.width;
+        // CGFloat yPos= self.graphDataBounds.size.height + self;
+        
+//        xPos += self.graphDataBounds.origin.x;
+//        yPosBottom += self.graphDataBounds.origin.y;
+        
+        // label.center = CGPointMake(self.graphDataBounds.origin.x / 2, yPos);
+        [self addSubview:label];
+    }
 }
 
 #pragma mark - Point generation
@@ -318,7 +398,7 @@ typedef struct {
     
     for (int i = 0; i < xIndices.count; i++)
     {
-        CGFloat referenceLineXIndex = (float)[xIndices[i] floatValue];
+        CGFloat referenceLineXIndex = [xIndices[i] floatValue];
         CGFloat xPos = (referenceLineXIndex / totalDataPointsMinusOne) * self.graphDataBounds.size.width;
         CGFloat yPosBottom = self.graphDataBounds.size.height;
         

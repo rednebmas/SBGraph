@@ -9,10 +9,20 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>SBGraphTests.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
 		<key>225F52E81CADCB5E00BDBB29</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>22E2EEB41CB6D74D0042D89D</key>
 		<dict>
 			<key>primary</key>
 			<true/>
