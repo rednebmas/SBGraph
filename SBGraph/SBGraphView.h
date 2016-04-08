@@ -56,6 +56,8 @@ typedef struct
 @property (nonatomic) CGFloat gridLinesWidth;
 // default 0.0
 @property (nonatomic) CGFloat dataPointRadius;
+// default 3.0
+@property (nonatomic) CGFloat touchInputLinePointRadius;
 // default: { left: 35, top: 0, bottom: 35, right: 0 }
 @property (nonatomic) SBGraphMargins margins;
 
@@ -75,6 +77,7 @@ typedef struct
 @property (nonatomic, retain) UIColor *colorHorizontalReferenceLines;
 @property (nonatomic, retain) UIColor *colorGraphBoundsLines;
 @property (nonatomic, retain) UIColor *colorTouchInputLine;
+@property (nonatomic, retain) UIColor *colorTouchInputLinePoint;
 @property (nonatomic, retain) UIColor *colorLabelText;
 
 @end
