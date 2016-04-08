@@ -79,7 +79,9 @@ typedef struct {
 
 #pragma mark - Drawing
 
-// redraw on rotate
+/**
+ * Redraw on rotate
+ */
 - (void) didRotate
 {
     [self setNeedsDisplay];
@@ -236,34 +238,28 @@ typedef struct {
 
 - (void) addLabelsForHorizontalReferenceLinesForYValues:(NSArray*)yValues
 {
-    CGFloat yMin = [self.delegate yMin];
-    CGFloat yMax = [self.delegate yMax];
-    CGFloat yRange = yMax - yMin;
-
     for (int i = 0; i < yValues.count; i++)
     {
         UILabel *label = [[UILabel alloc] init];
         [label setTextColor:self.colorLabelText];
         
         // get label text
-        CGFloat yValue = [yValues[i] floatValue];
+        CGFloat yVal = [yValues[i] floatValue];
         if ([self.delegate respondsToSelector:@selector(label:forYValue:)])
         {
-            [self.delegate label:label forYValue:yValue];
+            [self.delegate label:label forYValue:yVal];
         }
         else
         {
-            NSString *labelText = [NSString stringWithFormat:@"%.1f", yValue];
+            NSString *labelText = [NSString stringWithFormat:@"%.1f", yVal];
             [label setFont:[UIFont systemFontOfSize:10.0]];
             [label setText:labelText];
         }
         
         [label sizeToFit];
         
-        CGFloat yPos = (1 - ((yValue - yMin) / yRange)) * self.graphDataBounds.size.height;
-        yPos += self.graphDataBounds.origin.y;
-        
-        label.center = CGPointMake(self.graphDataBounds.origin.x / 2, yPos);
+        CGPoint labelPosYONLY = [self.coordinateMapper screenPointForGraphPoint:CGPointMake(0, yVal)];
+        label.center = CGPointMake(self.graphDataBounds.origin.x / 2, labelPosYONLY.y);
         [self addSubview:label];
     }
 }
@@ -305,9 +301,6 @@ typedef struct {
 
 - (NSArray*) graphDataPoints
 {
-    CGFloat yMin = [self.delegate yMin];
-    CGFloat yMax = [self.delegate yMax];
-    CGFloat yRange = yMax - yMin;
     NSArray *yValues = [self.delegate yValues];
     
     NSMutableArray *points = [[NSMutableArray alloc] initWithCapacity:yValues.count];
@@ -360,23 +353,14 @@ typedef struct {
  */
 - (NSArray*) horizontalReferenceLinesForYValues:(NSArray*)yValues
 {
-    CGFloat yMin = [self.delegate yMin];
-    CGFloat yMax = [self.delegate yMax];
-    CGFloat yRange = yMax - yMin;
-    
     NSMutableArray *lines = [[NSMutableArray alloc] initWithCapacity:yValues.count];
     for (int i = 0; i < yValues.count; i++)
     {
-        
         CGFloat yVal = [yValues[i] floatValue];
-        CGFloat xPosLeft = self.graphDataBounds.origin.x;
-        CGFloat yPos = (1 - ((yVal - yMin) / yRange)) * self.graphDataBounds.size.height;
-        yPos += self.graphDataBounds.origin.y;
-        
-        CGPoint pointLeft = CGPointMake(xPosLeft, yPos);
+        CGPoint pointLeft = [self.coordinateMapper screenPointForGraphPoint:CGPointMake(0, yVal)];
         CGPoint pointRight = CGPointMake(
-                                         xPosLeft + self.graphDataBounds.size.width,
-                                         yPos
+                                         pointLeft.x + self.graphDataBounds.size.width,
+                                         pointLeft.y
                                          );
         
         SBLine *line = [[SBLine alloc] init];
@@ -398,21 +382,15 @@ typedef struct {
 - (NSArray*) verticalReferenceLinesForXIndices:(NSArray*)xIndices
                     andTotalNumberOfDataPoints:(size_t)dataPointsCount
 {
-    CGFloat totalDataPointsMinusOne = (float)dataPointsCount - 1;
     NSMutableArray *lines = [[NSMutableArray alloc] initWithCapacity:xIndices.count];
     
     for (int i = 0; i < xIndices.count; i++)
     {
         CGFloat referenceLineXIndex = [xIndices[i] floatValue];
-        CGFloat xPos = (referenceLineXIndex / totalDataPointsMinusOne) * self.graphDataBounds.size.width;
-        CGFloat yPosBottom = self.graphDataBounds.size.height;
-        
-        xPos += self.graphDataBounds.origin.x;
-        yPosBottom += self.graphDataBounds.origin.y;
-        
-        CGPoint pointBottom = CGPointMake(xPos, yPosBottom);
+        CGPoint pointBottom = [self.coordinateMapper
+                               screenPointForGraphPoint:CGPointMake(referenceLineXIndex, 0)];
         CGPoint pointTop = CGPointMake(
-                                         xPos,
+                                         pointBottom.x,
                                          self.graphDataBounds.origin.y
                                          );
         
