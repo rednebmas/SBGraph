@@ -16,8 +16,8 @@ typedef struct
     
     // I have not had a need to use these yet...
     // If you do, don't forget to modify calculateGraphDataBounds 
-    // CGFloat right;
-    // CGFloat top;
+    CGFloat right;
+    CGFloat top;
 } SBGraphMargins;
 
 @protocol SBGraphViewDelegate <NSObject>

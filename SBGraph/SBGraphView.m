@@ -93,7 +93,7 @@ typedef struct {
 - (void) drawRect:(CGRect)rect
 {
     [self calculateGraphDataBounds];
-    self.touchInputLine.frame = CGRectMake(0, 0, 1, self.graphDataBounds.size.height);
+    self.touchInputLine.frame = CGRectMake(0, self.graphDataBounds.origin.y, 1, self.graphDataBounds.size.height);
     
     NSMutableArray *lines = [[NSMutableArray alloc] init];
     
@@ -143,6 +143,12 @@ typedef struct {
         NSArray *verticalReferenceLines = [self
                                            verticalReferenceLinesForXIndices:xIndices
                                            andTotalNumberOfDataPoints:dataLine.points.count];
+        
+        if (self.enableXAxisLabels)
+        {
+            [self addLabelsForVerticalReferenceLinesForXIndices:xIndices];
+        }
+        
         [lines addObjectsFromArray:verticalReferenceLines];
     }
     
@@ -218,14 +224,16 @@ typedef struct {
 {
     CGFloat leftMargin = self.margins.left;
     CGFloat bottomMargin = self.margins.bottom;
+    CGFloat rightMargin = self.margins.right;
+    CGFloat topMargin = self.margins.top;
     
     // if the line goes from (0,0) to (10,0) and the width is 2, the top of the stroked line will be (0, -1) at the first point. this variable allows the full width of the data bounds to be shown on the screen.
     CGFloat halfGridLinesWidth = self.gridLinesWidth / 2;
     
     self.graphDataBounds = CGRectMake(
                                       leftMargin - halfGridLinesWidth,
-                                      halfGridLinesWidth,
-                                      self.bounds.size.width - leftMargin,
+                                      halfGridLinesWidth + topMargin,
+                                      self.bounds.size.width - leftMargin - rightMargin,
                                       self.bounds.size.height - bottomMargin
                                       );
     
@@ -279,20 +287,18 @@ typedef struct {
         }
         else
         {
-            NSString *labelText = [NSString stringWithFormat:@"%.1f", xIndex];
+            NSString *labelText = [NSString stringWithFormat:@"%.0f", xIndex];
             [label setFont:[UIFont systemFontOfSize:10.0]];
             [label setText:labelText];
         }
         
         [label sizeToFit];
         
-        CGFloat xPos = (xIndex / (float)xIndices.count) * self.graphDataBounds.size.width;
-        // CGFloat yPos= self.graphDataBounds.size.height + self;
+        CGPoint labelPos = [self.coordinateMapper screenPointForGraphPoint:CGPointMake(xIndex, 0)];
+        labelPos.y = self.graphDataBounds.origin.y + self.graphDataBounds.size.height
+                     + label.frame.size.height;
         
-//        xPos += self.graphDataBounds.origin.x;
-//        yPosBottom += self.graphDataBounds.origin.y;
-        
-        // label.center = CGPointMake(self.graphDataBounds.origin.x / 2, yPos);
+        label.center = CGPointMake(labelPos.x, labelPos.y);
         [self addSubview:label];
     }
 }
