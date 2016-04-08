@@ -17,15 +17,19 @@ typedef struct {
 
 @interface SBGraphView()
 
+// The rect that the data will reside in, relative to this view
 @property (nonatomic) CGRect graphDataBounds;
 @property (nonatomic, retain) UIView *touchInputLine;
-@property (nonatomic, retain) UIView *touchInputLinePoint;
+@property (nonatomic, retain) UIView *touchInputPoint;
+@property (nonatomic, retain) UILabel *touchInputInfo;
 @property (nonatomic, retain) SBCoordinateMapper *coordinateMapper;
 @property (nonatomic, retain) NSArray *yValues;
 
 @end
 
 @implementation SBGraphView
+
+#pragma mark - Initialization
 
 - (id) init
 {
@@ -51,8 +55,10 @@ typedef struct {
 {
     self.coordinateMapper = [[SBCoordinateMapper alloc] init];
     
+    // colors
     self.colorTouchInputLine = [[UIColor whiteColor] colorWithAlphaComponent:.3];
-    self.colorTouchInputLinePoint = [UIColor whiteColor];
+    self.colorTouchInputPoint = [UIColor whiteColor];
+    self.colorTouchInputInfo = [UIColor whiteColor];
     self.colorVerticalReferenceLines = [[UIColor whiteColor] colorWithAlphaComponent:.5];
     self.colorHorizontalReferenceLines = [[UIColor whiteColor] colorWithAlphaComponent:.5];
     self.colorGraphBoundsLines = [[UIColor whiteColor] colorWithAlphaComponent:.9];
@@ -67,17 +73,30 @@ typedef struct {
     [self addSubview:self.touchInputLine];
     
     // touch input line point
-    _touchInputLinePointRadius = 3.0;
-    self.touchInputLinePoint = [[UIView alloc]
-                                initWithFrame:CGRectMake(-self.touchInputLinePointRadius,
+    _touchInputPointRadius = 3.0;
+    self.touchInputPoint = [[UIView alloc]
+                                initWithFrame:CGRectMake(-self.touchInputPointRadius,
                                                          0,
-                                                         self.touchInputLinePointRadius * 2,
-                                                         self.touchInputLinePointRadius * 2)];
-    self.touchInputLinePoint.hidden = YES;
-    self.touchInputLinePoint.backgroundColor = self.colorTouchInputLinePoint;
-    self.touchInputLinePoint.layer.cornerRadius = self.touchInputLinePointRadius;
-    [self addSubview:self.touchInputLinePoint];
+                                                         self.touchInputPointRadius * 2,
+                                                         self.touchInputPointRadius * 2)];
+    self.touchInputPoint.hidden = YES;
+    self.touchInputPoint.backgroundColor = self.colorTouchInputPoint;
+    self.touchInputPoint.layer.cornerRadius = self.touchInputPointRadius;
+    [self addSubview:self.touchInputPoint];
     
+    // touch input info
+    self.touchInputInfo = [[UILabel alloc] initWithFrame:self.touchInputPoint.frame];
+    self.touchInputInfo.clipsToBounds = YES;
+    self.touchInputInfo.hidden = YES;
+    self.touchInputInfo.layer.cornerRadius = 3.0;
+    self.touchInputInfo.backgroundColor = self.colorTouchInputInfo;
+    [self.touchInputInfo setText:@"ASDF Test"];
+    [self.touchInputInfo setFont:[UIFont systemFontOfSize:12.0]];
+    [self.touchInputInfo setTextAlignment:NSTextAlignmentCenter];
+    [self.touchInputInfo sizeToFit];
+    [self addSubview:self.touchInputInfo];
+    
+    // primitives
     self.enableGraphBoundsLines = YES;
     self.enableYAxisLabels = YES;
     self.enableXAxisLabels = YES;
@@ -438,7 +457,8 @@ typedef struct {
 - (void) touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     self.touchInputLine.hidden = NO;
-    self.touchInputLinePoint.hidden = NO;
+    self.touchInputPoint.hidden = NO;
+    self.touchInputInfo.hidden = NO;
     [self handleTouches:touches withEvent:event];
 }
 
@@ -452,7 +472,8 @@ typedef struct {
     if (self.touchInputLine.hidden == NO)
     {
         self.touchInputLine.hidden = YES;
-        self.touchInputLinePoint.hidden = YES;
+        self.touchInputPoint.hidden = YES;
+        self.touchInputInfo.hidden = YES;
     }
 }
 
@@ -478,10 +499,19 @@ typedef struct {
         self.touchInputLine.frame = touchRect;
         
         // move touch input point
-        CGRect touchPointRect = self.touchInputLinePoint.frame;
-        touchPointRect.origin.x = screenPointForClosestDataPoint.x - self.touchInputLinePointRadius;
-        touchPointRect.origin.y = screenPointForClosestDataPoint.y - self.touchInputLinePointRadius;
-        self.touchInputLinePoint.frame = touchPointRect;
+        CGRect touchPointRect = self.touchInputPoint.frame;
+        touchPointRect.origin.x = screenPointForClosestDataPoint.x - self.touchInputPointRadius;
+        touchPointRect.origin.y = screenPointForClosestDataPoint.y - self.touchInputPointRadius;
+        self.touchInputPoint.frame = touchPointRect;
+        
+        // touch input info
+        [self.touchInputInfo sizeToFit];
+        CGFloat yDirection = screenPointForClosestDataPoint.y > 22.0 ? 22.0 : -13.0;
+        CGRect touchInfoRect = self.touchInputInfo.frame;
+        touchInfoRect.origin.x = screenPointForClosestDataPoint.x - touchInfoRect.size.width / 2.0;
+        touchInfoRect.origin.y = touchPointRect.origin.y - yDirection;
+        touchInfoRect = [self padLabel:touchInfoRect];
+        self.touchInputInfo.frame = touchInfoRect;
     }
 }
 
@@ -494,18 +524,31 @@ typedef struct {
     return index;
 }
 
+- (CGRect) padLabel:(CGRect)labelRect
+{
+    CGFloat leftRight = 6.0;
+    CGFloat bottomTop = 2.0;
+    
+    labelRect.origin.x -= leftRight;
+    labelRect.origin.y -= bottomTop;
+    labelRect.size.width += 2 * leftRight;
+    labelRect.size.height += 2 * bottomTop;
+    
+    return labelRect;
+}
+
 
 #pragma mark - Setters
 
-- (void) setTouchInputLinePointRadius:(CGFloat)touchInputLinePointRadius
+- (void) settouchInputPointRadius:(CGFloat)touchInputPointRadius
 {
-    _touchInputLinePointRadius = touchInputLinePointRadius;
-    self.touchInputLinePoint.layer.cornerRadius = self.touchInputLinePointRadius;
+    _touchInputPointRadius = touchInputPointRadius;
+    self.touchInputPoint.layer.cornerRadius = self.touchInputPointRadius;
     
-    CGRect frame = self.touchInputLinePoint.frame;
-    frame.size.width = touchInputLinePointRadius * 2;
-    frame.size.height = touchInputLinePointRadius * 2;
-    self.touchInputLinePoint.frame = frame;
+    CGRect frame = self.touchInputPoint.frame;
+    frame.size.width = touchInputPointRadius * 2;
+    frame.size.height = touchInputPointRadius * 2;
+    self.touchInputPoint.frame = frame;
 }
 
 @end
