@@ -90,7 +90,6 @@ typedef struct {
     self.touchInputInfo.hidden = YES;
     self.touchInputInfo.layer.cornerRadius = 3.0;
     self.touchInputInfo.backgroundColor = self.colorTouchInputInfo;
-    [self.touchInputInfo setText:@"ASDF Test"];
     [self.touchInputInfo setFont:[UIFont systemFontOfSize:12.0]];
     [self.touchInputInfo setTextAlignment:NSTextAlignmentCenter];
     [self.touchInputInfo sizeToFit];
@@ -321,21 +320,21 @@ typedef struct {
         [label setTextColor:self.colorLabelText];
         
         // get label text
-        CGFloat xIndex = [xIndices[i] floatValue];
+        NSInteger xIndex = [xIndices[i] integerValue];
         if ([self.delegate respondsToSelector:@selector(label:forXIndex:)])
         {
             [self.delegate label:label forXIndex:xIndex];
         }
         else
         {
-            NSString *labelText = [NSString stringWithFormat:@"%.0f", xIndex];
+            NSString *labelText = [NSString stringWithFormat:@"%d", (int)xIndex];
             [label setFont:[UIFont systemFontOfSize:10.0]];
             [label setText:labelText];
         }
         
         [label sizeToFit];
         
-        CGPoint labelPos = [self.coordinateMapper screenPointForGraphPoint:CGPointMake(xIndex, 0)];
+        CGPoint labelPos = [self.coordinateMapper screenPointForGraphPoint:CGPointMake((float)xIndex, 0)];
         labelPos.y = self.graphDataBounds.origin.y + self.graphDataBounds.size.height
                      + label.frame.size.height;
         
@@ -482,10 +481,23 @@ typedef struct {
     UITouch *touch = [touches anyObject];
     CGPoint locationInView = [touch locationInView:self];
     if (locationInView.x > self.graphDataBounds.origin.x
-        && locationInView.x < self.frame.size.width)
+        && locationInView.x < self.graphDataBounds.size.width + self.graphDataBounds.origin.x)
     {
-        // get data point coordinates
         NSInteger closestDataPointIndex = [self closestDataPointIndexForLocationInView:locationInView];
+        
+        // fill the label text
+        if ([self.delegate respondsToSelector:@selector(touchInputInfoLabel:forXIndex:)])
+        {
+            [self.delegate touchInputInfoLabel:self.touchInputInfo forXIndex:closestDataPointIndex];
+        }
+        else
+        {
+            CGFloat yValue = [self.yValues[closestDataPointIndex] floatValue];
+            NSString *text = [NSString stringWithFormat:@"(%d, %.1f)", closestDataPointIndex, yValue];
+            [self.touchInputInfo setText:text];
+        }
+        
+        // get data point coordinates
         CGPoint screenPointForClosestDataPoint = [self.coordinateMapper
                                                   screenPointForGraphPoint:CGPointMake(
                                                                                        closestDataPointIndex,
@@ -512,6 +524,7 @@ typedef struct {
         touchInfoRect.origin.y = touchPointRect.origin.y - yDirection;
         touchInfoRect = [self padLabel:touchInfoRect];
         self.touchInputInfo.frame = touchInfoRect;
+        
     }
 }
 
@@ -537,10 +550,9 @@ typedef struct {
     return labelRect;
 }
 
-
 #pragma mark - Setters
 
-- (void) settouchInputPointRadius:(CGFloat)touchInputPointRadius
+- (void) setTouchInputPointRadius:(CGFloat)touchInputPointRadius
 {
     _touchInputPointRadius = touchInputPointRadius;
     self.touchInputPoint.layer.cornerRadius = self.touchInputPointRadius;

@@ -36,7 +36,9 @@ typedef struct
 // provide a custom string for the y value labels
 // ex: add units or specify the number of decimals
 - (void) label:(UILabel*)label forYValue:(CGFloat)yValue;
-- (void) label:(UILabel*)label forXIndex:(CGFloat)yValue;
+- (void) label:(UILabel*)label forXIndex:(NSInteger)xIndex;
+// allows you to add information or modify the info pop when the user touches the graph
+- (void) touchInputInfoLabel:(UILabel*)label forXIndex:(NSInteger)index;
 
 @end
 
