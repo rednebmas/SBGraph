@@ -83,4 +83,11 @@ typedef struct
 @property (nonatomic, retain) UIColor *colorTouchInputInfo;
 @property (nonatomic, retain) UIColor *colorLabelText;
 
+
+//
+// Methods
+//
+
+- (void) setGradientFromColor:(UIColor*)from toColor:(UIColor*)to;
+
 @end

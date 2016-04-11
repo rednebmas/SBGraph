@@ -18,6 +18,7 @@ typedef struct {
 @interface SBGraphView()
 
 // The rect that the data will reside in, relative to this view
+@property (nonnull) CGGradientRef gradientRef;
 @property (nonatomic) CGRect graphDataBounds;
 @property (nonatomic, retain) UIView *touchInputLine;
 @property (nonatomic, retain) UIView *touchInputPoint;
@@ -210,6 +211,24 @@ typedef struct {
         if (lines[i] == nil) continue;
         [self drawLine:lines[i]];
     }
+    
+    //
+    // Draw gradient
+    //
+    if (self.gradientRef != 0)
+    {
+        SBLine *gradientEnclosingLine = [self gradientEnclosingLineForDataPoints:dataLine.points];
+        
+        UIBezierPath *pathG = [self pathForLine:gradientEnclosingLine];
+        
+        // Apply the gradient to the bottom portion of the graph
+        CGContextRef ctx = UIGraphicsGetCurrentContext();
+        CGContextSaveGState(ctx);
+        CGContextAddPath(ctx, pathG.CGPath);
+        CGContextClip(ctx);
+        CGContextDrawLinearGradient(ctx, self.gradientRef, CGPointZero, CGPointMake(0, CGRectGetMaxY(self.bounds)), 0);
+        CGContextRestoreGState(ctx);
+    }
 }
 
 - (void) drawLine:(SBLine*)line
@@ -367,6 +386,27 @@ typedef struct {
     }
     
     return points;
+}
+
+- (SBLine*) gradientEnclosingLineForDataPoints:(NSArray*)dataPoints
+{
+    NSMutableArray *gradientEclosingLinePoints = [dataPoints mutableCopy];
+    CGPoint lowerRight = CGPointMake(
+                                     self.graphDataBounds.origin.x + self.graphDataBounds.size.width,
+                                     self.graphDataBounds.origin.y + self.graphDataBounds.size.height
+                                     );
+    CGPoint lowerLeft = CGPointMake(
+                                    self.graphDataBounds.origin.x,
+                                    self.graphDataBounds.origin.y + self.graphDataBounds.size.height
+                                    );
+    [gradientEclosingLinePoints addObject:[NSValue valueWithCGPoint:lowerRight]];
+    [gradientEclosingLinePoints addObject:[NSValue valueWithCGPoint:lowerLeft]];
+    [gradientEclosingLinePoints addObject:gradientEclosingLinePoints[0]];
+    
+    SBLine *gradientEnclosingLine = [[SBLine alloc] init];
+    gradientEnclosingLine.points = gradientEclosingLinePoints;
+    
+    return gradientEnclosingLine;
 }
 
 /** 
@@ -591,9 +631,30 @@ typedef struct {
 // Public
 // --------------------------------------------------
 
-- (void) setGradientToFromColor:(UIColor*)from toColor:(UIColor*)to
+- (void) setGradientFromColor:(UIColor*)from toColor:(UIColor*)to
 {
+    // get components for from color
+    CGFloat redFrom, greenFrom, blueFrom, alphaFrom;
+    [from getRed:&redFrom green:&greenFrom blue:&blueFrom alpha:&alphaFrom];
     
+    // get components for to color
+    CGFloat redTo, greenTo, blueTo, alphaTo;
+    [to getRed:&redTo green:&greenTo blue:&blueTo alpha:&alphaTo];
+    
+    //
+    // Create gradient ref
+    //
+    CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
+    size_t num_locations = 2;
+    CGFloat locations[2] = { 0.0, 1.0 };
+    CGFloat components[8] =
+    {
+        redFrom, greenFrom, blueFrom, alphaFrom,
+        redTo, greenTo, blueTo, alphaTo
+    };
+    
+    // Apply the gradient to the bottom portion of the graph
+    self.gradientRef = CGGradientCreateWithColorComponents(colorspace, components, locations, num_locations);
 }
 
 // --------------------------------------------------
