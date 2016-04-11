@@ -58,7 +58,7 @@ typedef struct {
     // colors
     self.colorTouchInputLine = [[UIColor whiteColor] colorWithAlphaComponent:.3];
     self.colorTouchInputPoint = [UIColor whiteColor];
-    self.colorTouchInputInfo = [[UIColor whiteColor] colorWithAlphaComponent:.9];
+    self.colorTouchInputInfo = [UIColor whiteColor];
     self.colorVerticalReferenceLines = [[UIColor whiteColor] colorWithAlphaComponent:.5];
     self.colorHorizontalReferenceLines = [[UIColor whiteColor] colorWithAlphaComponent:.5];
     self.colorGraphBoundsLines = [[UIColor whiteColor] colorWithAlphaComponent:.9];
@@ -284,7 +284,7 @@ typedef struct {
                                       leftMargin - halfGridLinesWidth,
                                       halfGridLinesWidth + topMargin,
                                       self.bounds.size.width - leftMargin - rightMargin,
-                                      self.bounds.size.height - bottomMargin
+                                      self.bounds.size.height - bottomMargin - topMargin
                                       );
     
     // configure coordinate mapper
@@ -318,6 +318,7 @@ typedef struct {
         
         CGPoint labelPosYONLY = [self.coordinateMapper screenPointForGraphPoint:CGPointMake(0, yVal)];
         label.center = CGPointMake(self.graphDataBounds.origin.x / 2, labelPosYONLY.y);
+        label.center = CGPointMake(lroundf(self.graphDataBounds.origin.x / 2), lroundf(labelPosYONLY.y));
         [self addSubview:label];
     }
 }
@@ -348,7 +349,7 @@ typedef struct {
         labelPos.y = self.graphDataBounds.origin.y + self.graphDataBounds.size.height
                      + label.frame.size.height;
         
-        label.center = CGPointMake(labelPos.x, labelPos.y);
+        label.center = CGPointMake(lroundf(labelPos.x), lroundf(labelPos.y));
         [self addSubview:label];
     }
 }
@@ -539,7 +540,7 @@ typedef struct {
     touchInfoRect.origin.y = touchPointRect.origin.y - yDirection;
     touchInfoRect = [self padLabel:touchInfoRect];
     
-    // keep the window inside this view
+    // keep the touch input info view inside this view
     if (touchInfoRect.origin.x < 1)
     {
         touchInfoRect.origin.x = 1;
@@ -585,6 +586,19 @@ typedef struct {
 }
 
 #pragma mark - Setters
+
+// --------------------------------------------------
+// Public
+// --------------------------------------------------
+
+- (void) setGradientToFromColor:(UIColor*)from toColor:(UIColor*)to
+{
+    
+}
+
+// --------------------------------------------------
+// Private
+// --------------------------------------------------
 
 - (void) setTouchInputPointRadius:(CGFloat)touchInputPointRadius
 {
