@@ -39,6 +39,7 @@ typedef struct
 - (void) label:(UILabel*)label forXIndex:(NSInteger)xIndex;
 // allows you to add information or modify the info pop when the user touches the graph
 - (void) touchInputInfoLabel:(UILabel*)label forXIndex:(NSInteger)index;
+- (void) noDataLabel:(UILabel*)noDataLabel;
 
 @end
 
@@ -89,5 +90,6 @@ typedef struct
 //
 
 - (void) setGradientFromColor:(UIColor*)from toColor:(UIColor*)to;
+- (void) reloadData;
 
 @end

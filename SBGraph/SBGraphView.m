@@ -122,6 +122,11 @@ typedef struct {
     [self setNeedsDisplay];
 }
 
+- (void) reloadData
+{
+    [self setNeedsDisplay];
+}
+
 /**
  * The general idea here is to get all the points for all the lines we want to draw, then draw them.
  */
@@ -139,6 +144,25 @@ typedef struct {
     
     // get y values
     self.yValues = [self.delegate yValues];
+    
+    // if there is no data, add a label and return
+    if (self.yValues == nil || self.yValues.count == 0)
+    {
+        UILabel *noDataLabel = [[UILabel alloc] init];
+        [noDataLabel setText:@"No data"];
+        
+        if ([self.delegate respondsToSelector:@selector(noDataLabel:)])
+        {
+            [self.delegate noDataLabel:noDataLabel];
+        }
+        
+        [noDataLabel sizeToFit];
+        noDataLabel.center = self.center;
+        
+        [self addSubview:noDataLabel];
+        
+        return;
+    }
     
     // calculate graph position rect in view including margins
     [self calculateGraphDataBounds];
@@ -529,6 +553,8 @@ typedef struct {
 
 - (void) handleTouches:(NSSet<UITouch *> *)touches withEvent:(UIEvent*)event
 {
+    if (self.yValues == nil || self.yValues.count == 0) return;
+    
     UITouch *touch = [touches anyObject];
     CGPoint locationInView = [touch locationInView:self];
     
