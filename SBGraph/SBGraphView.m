@@ -90,6 +90,7 @@ typedef struct {
     self.touchInputInfo.clipsToBounds = YES;
     self.touchInputInfo.hidden = YES;
     self.touchInputInfo.layer.cornerRadius = 3.0;
+    self.touchInputInfo.numberOfLines = 0;
     self.touchInputInfo.backgroundColor = self.colorTouchInputInfo;
     [self.touchInputInfo setFont:[UIFont systemFontOfSize:12.0]];
     [self.touchInputInfo setTextAlignment:NSTextAlignmentCenter];
@@ -600,10 +601,21 @@ typedef struct {
     //
     [self.touchInputInfo sizeToFit];
     CGRect touchInfoRect = self.touchInputInfo.frame;
-    CGFloat yDirection = screenPointForClosestDataPoint.y > touchInfoRect.size.height + 2 ? 22.0 : -15.0;
+    CGFloat verticalSpaceFromDataPoint = 15.0;
+    CGFloat yDirection;
+    if (screenPointForClosestDataPoint.y > touchInfoRect.size.height + verticalSpaceFromDataPoint)
+    {
+        // put the touch input info label ABOVE the data point
+        yDirection = -verticalSpaceFromDataPoint - touchInfoRect.size.height;
+    }
+    else
+    {
+        // put the touch input info label BELOW the data point
+        yDirection = verticalSpaceFromDataPoint;
+    }
     
     touchInfoRect.origin.x = screenPointForClosestDataPoint.x - touchInfoRect.size.width / 2.0;
-    touchInfoRect.origin.y = touchPointRect.origin.y - yDirection;
+    touchInfoRect.origin.y = screenPointForClosestDataPoint.y + yDirection;
     touchInfoRect = [self padLabel:touchInfoRect];
     
     // keep the touch input info view inside this view
@@ -696,6 +708,11 @@ typedef struct {
     frame.size.width = touchInputPointRadius * 2;
     frame.size.height = touchInputPointRadius * 2;
     self.touchInputPoint.frame = frame;
+}
+
+- (void) setColorTouchInputPoint:(UIColor *)colorTouchInputPoint
+{
+    self.touchInputPoint.backgroundColor = colorTouchInputPoint;
 }
 
 @end
