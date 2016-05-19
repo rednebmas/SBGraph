@@ -107,6 +107,8 @@ typedef struct {
     SBGraphMargins margins;
     margins.left = 35;
     margins.bottom = 35;
+    margins.top = 0;
+    margins.right = 0;
     self.margins = margins;
     
     // redraw on rotate
@@ -147,7 +149,7 @@ typedef struct {
     self.yValues = [self.delegate yValues];
     
     // if there is no data, add a label and return
-    if (self.yValues == nil || self.yValues.count == 0)
+    if (self.yValues == nil || self.yValues.count < 2)
     {
         UILabel *noDataLabel = [[UILabel alloc] init];
         [noDataLabel setText:@"No data"];
@@ -554,7 +556,7 @@ typedef struct {
 
 - (void) handleTouches:(NSSet<UITouch *> *)touches withEvent:(UIEvent*)event
 {
-    if (self.yValues == nil || self.yValues.count == 0) return;
+    if (self.yValues == nil || self.yValues.count < 2) return;
     
     UITouch *touch = [touches anyObject];
     CGPoint locationInView = [touch locationInView:self];
@@ -563,7 +565,7 @@ typedef struct {
     
     // set text for touch input info label
     CGFloat yValue = [self.yValues[closestDataPointIndex] floatValue];
-    NSString *text = [NSString stringWithFormat:@"(%d, %.f)", closestDataPointIndex, yValue];
+    NSString *text = [NSString stringWithFormat:@"(%ld, %.f)", (long)closestDataPointIndex, yValue];
     [self.touchInputInfo setText:text];
     
     // fill the label text
