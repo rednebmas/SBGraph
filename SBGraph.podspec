@@ -8,33 +8,29 @@
 
 Pod::Spec.new do |s|
   s.name             = "SBGraph"
-  s.version          = "0.1.0"
-  s.summary          = "A short description of SBGraph."
+  s.version          = "1.0.0"
+  s.summary          = "A lightweight line graphing library."
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
 #   * Try to keep it short, snappy and to the point.
 #   * Write the description between the DESC delimiters below.
 #   * Finally, don't worry about the indent, CocoaPods strips it!  
-  s.description      = <<-DESC
-                       DESC
+  s.description      = "A lightweight line graphing library. I built this for my app Tunerval."
 
-  s.homepage         = "https://github.com/<GITHUB_USERNAME>/SBGraph"
+  s.homepage         = "https://github.com/rednebmas/SBGraph"
   # s.screenshots     = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
   s.license          = 'MIT'
   s.author           = { "Sam Bender" => "rednebmas@gmail.com" }
-  s.source           = { :git => "https://github.com/<GITHUB_USERNAME>/SBGraph.git", :tag => s.version.to_s }
-  # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
+  s.source           = { :git => "https://github.com/rednebmas/SBGraph.git", :tag => s.version.to_s }
 
-  s.platform     = :ios, '7.0'
+  s.platform     = :ios, '8.0'
   s.requires_arc = true
 
   s.source_files = 'SBGraph/*.{h,m}'
-  s.resource_bundles = {
-    'SBGraph' => ['Pod/Assets/*.png']
-  }
+  # s.resource_bundles = {
+  #   'SBGraph' => ['Pod/Assets/*.png']
+  # }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
 end
